@@ -1,3 +1,52 @@
+```
+import openpyxl
+import matplotlib.pyplot as plt
+from collections import Counter
+
+def count_non_empty_cells(filename, sheet_name):
+    """ 엑셀 파일에서 비어있지 않은 셀 개수를 세는 함수 """
+    wb = openpyxl.load_workbook(filename)
+    sheet = wb[sheet_name]
+
+    cell_counts = Counter()
+
+    for row in sheet.iter_rows():
+        for cell in row:
+            if cell.value:  # 셀이 비어있지 않다면
+                cell_counts[cell.value] += 1
+
+    wb.close()
+    return cell_counts
+
+def get_top5_counts(cell_counts):
+    """ 개수가 많은 TOP 5 항목을 반환하는 함수 """
+    return dict(cell_counts.most_common(5))
+
+def plot_pie_chart(top5_counts):
+    """ TOP 5 데이터를 원형 차트로 그리는 함수 """
+    labels = list(top5_counts.keys())
+    values = list(top5_counts.values())
+
+    plt.figure(figsize=(8, 6))
+    plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140, colors=['#ff9999','#66b3ff','#99ff99','#ffcc99','#c2c2f0'])
+    plt.title('Top 5 Most Frequent Values in Excel')
+    plt.show()
+
+# 사용 예시
+filename = "your_excel_file.xlsx"
+sheet_name = "Sheet1"
+
+# 1. 비어있지 않은 셀 개수 세기
+cell_counts = count_non_empty_cells(filename, sheet_name)
+
+# 2. TOP 5 찾기
+top5_counts = get_top5_counts(cell_counts)
+
+# 3. 원형 차트 그리기
+plot_pie_chart(top5_counts)
+
+```
+
 ## 주의해야할점
 프로그램 산출물 저장시 내부에 변환 과정에서 최종 결과물이 중복될 경우 오류
 ex 마지막 ip 주소를 특정 문자로 변환하는 과정에서 중복 발생 => 어떻게 처리? 문자열을 부여할지 더 좋은 방법이 있는가?
